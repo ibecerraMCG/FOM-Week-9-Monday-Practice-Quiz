@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 9 Monday Practice Quiz</title>
+<style>
+/* --- Color Variables --- */
+:root {
+    /* Default: Dark Theme */
+    --bg-color: #2d343e; /* Dark background */
+    --container-bg: #3c424f; /* Slightly lighter container */
+    --text-color: #e8e6e3; /* Light text */
+    --question-text-color: #8ab4f8; /* Light blue for questions */
+    --lo-text-color: #b0c4de; /* Lighter blue for learning objective */
+    --border-color: #555; /* Darker borders */
+    --separator-color: #4a4f5a;
+    --label-bg: #454c5a;
+    --label-border: #6c757d;
+    --label-hover-bg: #525966;
+    --label-hover-border: #7a828a;
+    --button-bg: #8ab4f8;
+    --button-text: #202124;
+    --button-hover-bg: #a3c5f9;
+    --button-disabled-bg: #5f6368;
+    --feedback-correct-bg: #344e41;
+    --feedback-correct-text: #c7f9cc;
+    --feedback-correct-border: #52b788;
+    --feedback-incorrect-bg: #5e2129;
+    --feedback-incorrect-text: #f8d7da;
+    --feedback-incorrect-border: #a4133c;
+    --feedback-rationale-text: #adb5bd; /* Lighter gray for rationale */
+    --feedback-source-text: #c7d3e0;
+    --feedback-separator: #6c757d;
+    --radio-accent: #8ab4f8;
+}
+
+.light-theme {
+    --bg-color: #eef2f7;
+    --container-bg: #ffffff;
+    --text-color: #343a40;
+    --question-text-color: #0056b3;
+    --lo-text-color: #5a6e8a;
+    --border-color: #dee2e6;
+    --separator-color: #e9ecef;
+    --label-bg: #f8f9fa;
+    --label-border: #ced4da;
+    --label-hover-bg: #e2e6ea;
+    --label-hover-border: #adb5bd;
+    --button-bg: #007bff;
+    --button-text: white;
+    --button-hover-bg: #0056b3;
+    --button-disabled-bg: #6c757d;
+    --feedback-correct-bg: #d1e7dd;
+    --feedback-correct-text: #0f5132;
+    --feedback-correct-border: #badbcc;
+    --feedback-incorrect-bg: #f8d7da;
+    --feedback-incorrect-text: #842029;
+    --feedback-incorrect-border: #f5c2c7;
+    --feedback-rationale-text: #495057;
+    --feedback-source-text: #343a40;
+    --feedback-separator: #ccc;
+    --radio-accent: #007bff;
+}
+
+/* --- General Styles --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.7;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding-bottom: 40px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#theme-toggle-button {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    padding: 8px 12px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--label-border);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    z-index: 1000;
+     transition: background-color 0.3s, color 0.3s;
+}
+ #theme-toggle-button:hover {
+     opacity: 0.8;
+ }
+
+
+#quiz-container {
+    max-width: 900px;
+    margin: 80px auto 30px auto;
+    background: var(--container-bg);
+    padding: 25px 35px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.question-block {
+    margin-bottom: 35px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--separator-color);
+    transition: border-color 0.3s;
+}
+
+.question-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+}
+
+.learning-objective {
+    font-size: 0.85em;
+    font-style: italic;
+    color: var(--lo-text-color);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--separator-color);
+}
+
+.question-text {
+    font-weight: 600;
+    font-size: 1.1em;
+    margin-bottom: 18px;
+    color: var(--question-text-color);
+    transition: color 0.3s;
+}
+
+.options label {
+    display: block;
+    margin-bottom: 12px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid var(--label-border);
+    background-color: var(--label-bg);
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.options label:hover {
+    background-color: var(--label-hover-bg);
+    border-color: var(--label-hover-border);
+}
+
+.options input[type="radio"]:checked+span {
+     font-weight: bold;
+     color: var(--question-text-color);
+}
+.options input[type="radio"] {
+    margin-right: 12px;
+    accent-color: var(--radio-accent);
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.check-button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+}
+
+.check-button:hover {
+    opacity: 0.85;
+}
+
+ .check-button:disabled {
+     background-color: var(--button-disabled-bg);
+     cursor: not-allowed;
+     opacity: 0.7;
+ }
+
+.feedback {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    display: none;
+    border: 1px solid transparent;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.feedback.correct {
+    background-color: var(--feedback-correct-bg);
+    color: var(--feedback-correct-text);
+    border-color: var(--feedback-correct-border);
+    display: block;
+}
+
+.feedback.incorrect {
+    background-color: var(--feedback-incorrect-bg);
+    color: var(--feedback-incorrect-text);
+    border-color: var(--feedback-incorrect-border);
+    display: block;
+}
+
+.feedback-status {
+     font-weight: bold;
+     font-size: 1.1em;
+     display: block;
+     margin-bottom: 8px;
+}
+
+.feedback-rationale {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--feedback-separator);
+    font-size: 0.9em;
+    color: var(--feedback-rationale-text);
+    transition: color 0.3s, border-color 0.3s;
+}
+
+.feedback-source {
+    margin-top: 10px;
+    font-size: 0.85em;
+    font-style: italic;
+    color: var(--feedback-source-text);
+    background-color: rgba(0,0,0,0.1);
+    padding: 8px;
+    border-radius: 4px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--question-text-color);
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+</style>
+</head>
+<body>
+
+<button id="theme-toggle-button">Toggle Theme</button>
+<h1>Week 9 Monday Practice Quiz</h1>
+
+<div id="quiz-container">
+    <!-- Questions will be loaded here by JavaScript -->
+</div>
+
+<script>
+    const quizData = [
+    // Early Embryonic Development Questions
+    {
+        learningObjective: "LO1 (Early Development): Describe the features and interactions of the egg and sperm during fertilization.",
+        question: "A couple undergoing fertility treatment is informed that the male partner's sperm shows low motility and is unable to bind to the oocyte in a standard culture medium. However, after incubation in a specialized medium that mimics the secretions of the female reproductive tract, the sperm gains hyperactivated motility and binding ability. This acquisition of functional competence is known as which of the following processes?",
+        options: {
+            A: "Acrosome reaction",
+            B: "Capacitation",
+            C: "Compaction",
+            D: "Polyspermy block"
+        },
+        correctAnswer: "B",
+        rationale: "Capacitation is the final maturation step for sperm, occurring in the female reproductive tract. It involves the removal of cholesterol from the sperm's plasma membrane, which unmasks receptors and alters membrane potential, leading to hyperactivated motility. This process is essential for the sperm to be able to undergo the acrosome reaction and fertilize the egg. The other options are distinct processes that occur at different times.",
+        source: "'Capacitation – the acquisition of these needed traits occurs upon exposure to the female reproductive tract: Secretions from the cervix and uterus remove cholesterol from the sperm plasma membrane, exposing receptors...' (Early Development Handout, Page 2)"
+    },
+    {
+        learningObjective: "LO1 (Early Development): Describe the features and interactions of the egg and sperm during fertilization.",
+        question: "During an in vitro fertilization (IVF) procedure, microscopic observation reveals that multiple sperm have successfully penetrated the zona pellucida and fused with a single oocyte, resulting in a non-viable polyploid zygote. This outcome indicates a failure of which critical fertilization event?",
+        options: {
+            A: "Sperm capacitation",
+            B: "Pronuclear fusion",
+            C: "Acrosome reaction",
+            D: "Cortical reaction"
+        },
+        correctAnswer: "D",
+        rationale: "The cortical reaction is the primary mechanism for the 'fast block' to polyspermy. Upon the fusion of the first sperm with the oocyte membrane, cortical granules beneath the membrane release enzymes that cross-link the zona pellucida, making it impermeable to any subsequent sperm. A failure of this reaction allows for the entry of multiple sperm.",
+        source: "'Block to polyspermy - upon fusion of plasma membranes of sperm and egg, the cortical reaction (release of cross-linking enzymes from cortical granules) causes rapid cross-linking of the ZP that renders it impermeable to further sperm entry.' (Early Development Handout, Page 2)"
+    },
+    {
+        learningObjective: "LO1 (Early Development): Describe the features and interactions of the egg and sperm during fertilization.",
+        question: "At the time of ovulation, the female gamete is arrested at a specific stage of meiosis. The completion of meiosis II is a critical step in forming a diploid zygote. Which of the following events directly triggers the oocyte to complete meiosis II?",
+        options: {
+            A: "Ovulation",
+            B: "Implantation",
+            C: "Fusion of sperm and egg membranes",
+            D: "Formation of the morula"
+        },
+        correctAnswer: "C",
+        rationale: "The oocyte is arrested in metaphase of meiosis II at the time of ovulation. It will remain in this state until it is fertilized. The fusion of the sperm and egg plasma membranes provides the signal that triggers the oocyte to resume and complete its second meiotic division, expelling the second polar body and forming the female pronucleus.",
+        source: "'Sperm and egg cell membranes fuse... b. Triggers release of egg from metaphase II arrest and completion of meiosis II.' (Early Development Handout, Page 3)"
+    },
+    {
+        learningObjective: "LO2 (Early Development): Describe the processes of cleavage, compaction, and blastocyst formation in week 1.",
+        question: "On day 3 post-fertilization, an embryo is a loose cluster of 16 cells known as a morula. By day 4, it transforms into a smooth-surfaced, tightly bound ball of cells. This process involves the expression of E-cadherin and the formation of adherens junctions, particularly among the outer cells. This critical morphological change is called:",
+        options: {
+            A: "Hatching",
+            B: "Cleavage",
+            C: "Gastrulation",
+            D: "Compaction"
+        },
+        correctAnswer: "D",
+        rationale: "Compaction is the process by which the blastomeres of the morula maximize their contact with each other, forming a compact ball of cells with a smooth surface. This is mediated by cell adhesion molecules like E-cadherin and is the first step in segregating the inner cells (which form the inner cell mass) from the outer cells (which form the trophoblast).",
+        source: "'The morula undergoes compaction to make a smooth-surfaced ball of cells. In compaction, cell-cell adhesions called adherens junctions form between many of the cells... Compaction is one result of a successful maternal-to-zygotic transition, in which the zygote begins to express the E-cadherin cell adhesion receptor.' (Early Development Handout, Page 3)"
+    },
+    {
+        learningObjective: "LO2 (Early Development): Describe the processes of cleavage, compaction, and blastocyst formation in week 1.",
+        question: "For the purpose of pre-implantation genetic diagnosis (PGD), a single cell is biopsied from the outer epithelial layer of a day 5 blastocyst. This cell is analyzed for genetic abnormalities. The biopsied cell is part of which structure?",
+        options: {
+            A: "Inner cell mass",
+            B: "Epiblast",
+            C: "Trophoblast",
+            D: "Hypoblast"
+        },
+        correctAnswer: "C",
+        rationale: "The blastocyst is composed of two main cell populations: the inner cell mass (which will form the embryo proper) and the trophoblast, which is the outer layer of cells. The trophoblast is responsible for implantation and will contribute to the fetal portion of the placenta. Biopsy for PGD is typically performed on trophoblast cells.",
+        source: "'Blastocyst... a. Trophoblast – outermost cells of the blastocyst that will contribute to the fetal chorion.' (Early Development Handout, Page 3)"
+    },
+    {
+        learningObjective: "LO2 (Early Development): Describe the processes of cleavage, compaction, and blastocyst formation in week 1.",
+        question: "Following fertilization, the zygote undergoes a series of rapid mitotic divisions as it travels down the uterine tube. These divisions partition the large volume of the zygote's cytoplasm into numerous, progressively smaller cells. What are these individual cells of the early embryo called?",
+        options: {
+            A: "Zygotes",
+            B: "Blastomeres",
+            C: "Morulae",
+            D: "Trophoblasts"
+        },
+        correctAnswer: "B",
+        rationale: "The mitotic divisions that occur in the first few days after fertilization are called cleavage divisions. The cells produced by these divisions are known as blastomeres. As cleavage proceeds, the number of blastomeres increases while their individual size decreases.",
+        source: "'Before implantation, mitotic divisions partition the zygote into increasingly smaller blastomeres (cells of the early embryo). These are called the cleavage divisions.' (Early Development Handout, Page 3)"
+    },
+    {
+        learningObjective: "LO3 (Early Development): Discuss developmental events during implantation in week 2, including trophoblast differentiation and bilaminar disc formation.",
+        question: "A 24-year-old woman's home pregnancy test is positive. This test detects the presence of human chorionic gonadotropin (hCG) in her urine. During early pregnancy, which cell type is the primary source of hCG production?",
+        options: {
+            A: "Cytotrophoblast",
+            B: "Epiblast",
+            C: "Syncytiotrophoblast",
+            D: "Inner cell mass"
+        },
+        correctAnswer: "C",
+        rationale: "After the blastocyst begins to implant, the trophoblast differentiates into an inner cytotrophoblast and an outer syncytiotrophoblast. The syncytiotrophoblast is a multinucleated, invasive mass that secretes hCG, the hormone essential for maintaining the corpus luteum and, consequently, the pregnancy. hCG is the hormone detected in pregnancy tests.",
+        source: "'Syncytiotrophoblast also secretes hCG, human chorionic gonadotropin, an endocrine hormone essential for maintenance of pregnancy; hCG... is the basis for both blood and urine pregnancy tests.' (Early Development Handout, Page 4)"
+    },
+    {
+        learningObjective: "LO3 (Early Development): Discuss developmental events during implantation in week 2, including trophoblast differentiation and bilaminar disc formation.",
+        question: "Around day 8 of development, the inner cell mass organizes into a two-layered plate of cells known as the bilaminar embryonic disc. This disc is the source of all embryonic tissues. These two layers are the:",
+        options: {
+            A: "Cytotrophoblast and syncytiotrophoblast",
+            B: "Amnion and yolk sac",
+            C: "Epiblast and hypoblast",
+            D: "Ectoderm and endoderm"
+        },
+        correctAnswer: "C",
+        rationale: "The inner cell mass differentiates to form the bilaminar disc, which consists of two distinct epithelial layers: the epiblast, a layer of tall columnar cells, and the hypoblast, a layer of small cuboidal cells adjacent to the blastocyst cavity. The epiblast will go on to form the three primary germ layers, while the hypoblast contributes to the yolk sac.",
+        source: "'Bilaminar embryonic disc - ovoid plate of cells that forms from the inner cell mass around day 7-8, consisting of 2 layers of epithelial cells... a. Epiblast... b. Hypoblast...' (Early Development Handout, Page 5)"
+    },
+    {
+        learningObjective: "LO3 (Early Development): Discuss developmental events during implantation in week 2, including trophoblast differentiation and bilaminar disc formation.",
+        question: "The chorion, which forms the fetal portion of the placenta, is a multi-layered structure that surrounds the embryo and other membranes. Which three distinct cell layers or tissues make up the chorion at the end of the second week?",
+        options: {
+            A: "Epiblast, Hypoblast, and Amnion",
+            B: "Syncytiotrophoblast, Cytotrophoblast, and Extraembryonic mesoderm",
+            C: "Ectoderm, Mesoderm, and Endoderm",
+            D: "Amnion, Yolk Sac, and Allantois"
+        },
+        correctAnswer: "B",
+        rationale: "The chorion is the outermost fetal membrane and is the primary site of nutrient and gas exchange. It is composed of the two layers of the trophoblast (the outer syncytiotrophoblast and inner cytotrophoblast) and an underlying layer of extraembryonic mesoderm that develops during the second week.",
+        source: "'Chorion - forms the fetal portion of the placenta... These three cell types/layers make up the chorion: i. Syncytiotrophoblast ii. Cytotrophoblast iii. Extraembryonic mesoderm.' (Early Development Handout, Page 5)"
+    },
+    {
+        learningObjective: "LO4 (Early Development): Apply knowledge to clinical scenarios of early pregnancy, infertility, and assisted reproduction.",
+        question: "A couple undergoing IVF has an embryo that develops normally to the blastocyst stage. However, on day 7, it fails to implant in the prepared uterine wall. Further investigation reveals that the blastocyst never emerged from its protective outer layer, a process required for implantation. The failure of the embryo to 'hatch' indicates a problem with the degradation of which structure?",
+        options: {
+            A: "Corona radiata",
+            B: "Trophoblast",
+            C: "Zona pellucida",
+            D: "Inner cell mass"
+        },
+        correctAnswer: "C",
+        rationale: "The zona pellucida (ZP) is a glycoprotein matrix that surrounds the oocyte and early embryo. One of its key functions is to prevent premature implantation in the uterine tube. For implantation to occur in the uterus, the blastocyst must 'hatch' by enzymatically degrading and breaking out of the ZP, allowing the trophoblast to make direct contact with the endometrium.",
+        source: "'Barrier to premature and ectopic implantation within the uterine tube; hatching of blastocyst from the ZP is necessary for the blastocyst to be able to implant...' (Early Development Handout, Page 2)"
+    },
+    {
+        learningObjective: "LO4 (Early Development): Apply knowledge to clinical scenarios of early pregnancy, infertility, and assisted reproduction.",
+        question: "A fertility specialist is evaluating a male patient whose sperm analysis shows normal count and motility. However, during an IVF attempt, the sperm are unable to penetrate the zona pellucida. Functional testing reveals that the sperm fail to release digestive enzymes upon contact with the oocyte. This points to a defect in which process?",
+        options: {
+            A: "Capacitation",
+            B: "Compaction",
+            C: "Acrosome reaction",
+            D: "Spermiogenesis"
+        },
+        correctAnswer: "C",
+        rationale: "The acrosome is a vesicle at the tip of the sperm head containing digestive enzymes. The acrosome reaction is the release of these enzymes, which is triggered by the sperm binding to the zona pellucida. This reaction is essential for the sperm to digest a path through the ZP and reach the oocyte. A failure in this process would prevent fertilization.",
+        source: "'Contact of sperm receptors with ZP triggers acrosome reaction (a release of acrosomal enzymes that allow sperm to degrade and push through the ZP locally).' (Early Development Handout, Page 2)"
+    },
+    {
+        learningObjective: "LO4 (Early Development): Apply knowledge to clinical scenarios of early pregnancy, infertility, and assisted reproduction.",
+        question: "A woman presents for her first prenatal visit. A blood test confirms pregnancy by detecting elevated levels of hCG. The production of hCG by the implanting embryo is critical for maintaining the pregnancy. When does hCG production begin?",
+        options: {
+            A: "Immediately upon fusion of sperm and egg",
+            B: "During the morula stage",
+            C: "After the blastocyst begins to implant",
+            D: "At the start of the second trimester"
+        },
+        correctAnswer: "C",
+        rationale: "Human chorionic gonadotropin (hCG) is produced by the syncytiotrophoblast, a layer that differentiates from the trophoblast only after the blastocyst initiates implantation into the uterine wall. Therefore, hCG production is a direct consequence of successful implantation and is not detectable until this process has begun (around 7-10 days after fertilization).",
+        source: "'Syncytiotrophoblast also secretes hCG... hCG can first be detected 7-10 days following the start of implantation...' (Early Development Handout, Page 4)"
+    },
+    // Germ Layers & Organization of Body Plan Questions
+    {
+        learningObjective: "LO1 (Germ Layers): Discuss the process of gastrulation and the formation of the three germ layers.",
+        question: "Gastrulation is a fundamental process in early embryonic development that occurs during the third week. What is the primary morphological outcome of this process?",
+        options: {
+            A: "Formation of a hollow ball of cells called the blastocyst",
+            B: "Implantation of the embryo into the uterine wall",
+            C: "Conversion of the bilaminar embryonic disc into a trilaminar disc",
+            D: "Formation of the neural tube from the ectoderm"
+        },
+        correctAnswer: "C",
+        rationale: "Gastrulation is the process by which the two-layered embryo (epiblast and hypoblast) is reorganized into a three-layered structure. This establishes the three primary germ layers—ectoderm, mesoderm, and endoderm—from which all tissues and organs of the body will develop.",
+        source: "'gastrulation → two layered disc → three layered disc representing the 3 germ layers' (Germ Layers Handout, Page 3)"
+    },
+    {
+        learningObjective: "LO1 (Germ Layers): Discuss the process of gastrulation and the formation of the three germ layers.",
+        question: "The process of gastrulation is initiated by the formation of a transient structure on the surface of the epiblast, which establishes the craniocaudal axis of the embryo and serves as the site of cell migration. What is this structure?",
+        options: {
+            A: "Notochord",
+            B: "Neural plate",
+            C: "Primitive streak",
+            D: "Somite"
+        },
+        correctAnswer: "C",
+        rationale: "The primitive streak is the first morphological sign of gastrulation. It appears as a groove on the dorsal surface of the epiblast. Epiblast cells proliferate and migrate through this streak to form the endoderm and mesoderm layers below.",
+        source: "'Primitive streak – is the first morphological marker of cranio-caudal axis (late embryo week 2)... results from proliferation and migration of epiblast cells.' (Germ Layers Handout, Page 4)"
+    },
+    {
+        learningObjective: "LO1 (Germ Layers): Discuss the process of gastrulation and the formation of the three germ layers.",
+        question: "During gastrulation, cells from the epiblast ingress through the primitive streak to form the endoderm and mesoderm. The remaining epiblast cells that do not migrate through the streak then constitute which of the primary germ layers?",
+        options: {
+            A: "Endoderm",
+            B: "Mesoderm",
+            C: "Ectoderm",
+            D: "Hypoblast"
+        },
+        correctAnswer: "C",
+        rationale: "Gastrulation involves a complex rearrangement of epiblast cells. The first cells to migrate form the endoderm, followed by cells that form the mesoderm. The cells of the epiblast that remain on the dorsal surface and do not ingress become the ectoderm.",
+        source: "'non-ingressing cells become ectoderm' (Germ Layers Handout, Page 4)"
+    },
+    {
+        learningObjective: "LO2 (Germ Layers): Discuss neural tube formation, neuropores, and the consequences of failed closure.",
+        question: "An infant is born with spina bifida, a condition where the vertebral arches fail to fuse over the spinal cord. This type of birth defect results from the incomplete closure of which embryonic structure?",
+        options: {
+            A: "Cranial neuropore",
+            B: "Caudal neuropore",
+            C: "Primitive streak",
+            D: "Lateral body folds"
+        },
+        correctAnswer: "B",
+        rationale: "Neurulation is the process of forming the neural tube, which closes like a zipper from the middle outwards. The last parts to close are the ends, known as the cranial (anterior) and caudal (posterior) neuropores. Failure of the caudal neuropore to close leads to defects of the lower spinal cord, such as spina bifida.",
+        source: "'Failed closure of the Caudal Neuropore leads to Spina Bifida.' (Germ Layers Handout, Page 7)"
+    },
+    {
+        learningObjective: "LO2 (Germ Layers): Discuss neural tube formation, neuropores, and the consequences of failed closure.",
+        question: "The process of neurulation begins when the dorsal ectoderm thickens to form the neural plate. This transformation of ectoderm into neural tissue is induced by signals from which adjacent structure?",
+        options: {
+            A: "Underlying notochord",
+            B: "Surface ectoderm",
+            C: "Primitive streak",
+            D: "Endoderm"
+        },
+        correctAnswer: "A",
+        rationale: "The notochord, a rod-like structure derived from axial mesoderm, lies directly beneath the dorsal midline ectoderm. It acts as a critical signaling center, secreting factors that induce the overlying ectoderm to differentiate into the neural plate, the precursor to the entire central nervous system.",
+        source: "'Dorsal ectoderm (non-ingressing epiblast) cells are specified to become neural plate by the underlying notochord.' (Germ Layers Handout, Page 6)"
+    },
+    {
+        learningObjective: "LO2 (Germ Layers): Discuss neural tube formation, neuropores, and the consequences of failed closure.",
+        question: "A physician advises a woman who is planning to become pregnant to begin taking a daily supplement to reduce the risk of having a child with a neural tube defect like spina bifida or anencephaly. Which of the following is the recommended supplement?",
+        options: {
+            A: "Iron",
+            B: "Vitamin D",
+            C: "Calcium",
+            D: "Folic acid"
+        },
+        correctAnswer: "D",
+        rationale: "Periconceptional supplementation with folic acid (a B vitamin) has been proven to significantly reduce the incidence of neural tube defects. It is recommended that all women of childbearing potential take folic acid, as the neural tube closes very early in development (by the end of week 4), often before a woman knows she is pregnant.",
+        source: "'Risk of NTDs can be reduced by folic acid and vitamin B12 supplements, before and during early pregnancy.' (Germ Layers Handout, Page 7)"
+    },
+    {
+        learningObjective: "LO3 (Germ Layers): Discuss the origin and derivatives of neural crest cells.",
+        question: "Neural crest cells are a multipotent, migratory cell population that gives rise to a diverse array of structures throughout the body. From which specific location do these cells originate during embryonic development?",
+        options: {
+            A: "The ventral floor of the neural tube",
+            B: "The notochord",
+            C: "The lateral edges of the neural plate as it fuses to form the neural tube",
+            D: "The surface ectoderm lateral to the neural plate"
+        },
+        correctAnswer: "C",
+        rationale: "Neural crest cells are specified at the border between the neural plate and the non-neural (surface) ectoderm. As the neural folds elevate and fuse to form the neural tube, these cells delaminate from the dorsal-most aspect of the tube and begin to migrate throughout the embryo.",
+        source: "'cells located along the lateral borders of neural plate form the dorsal-most portion of the neural tube. as the neural folds fuse, and the neural tube closes, the dorsal-most portion of neural tube gives rise to the neural crest.' (Germ Layers Slides, Page 27)"
+    },
+    {
+        learningObjective: "LO3 (Germ Layers): Discuss the origin and derivatives of neural crest cells.",
+        question: "A patient develops a melanoma, a cancer of pigment-producing cells in the skin. The cell of origin for this cancer, the melanocyte, is derived from which embryonic population?",
+        options: {
+            A: "Surface ectoderm",
+            B: "Paraxial mesoderm",
+            C: "Neural crest cells",
+            D: "Endoderm"
+        },
+        correctAnswer: "C",
+        rationale: "Melanocytes, the cells that produce melanin pigment, are one of the many derivatives of the neural crest. During development, neural crest cells migrate from their dorsal origin and populate the skin, where they differentiate into melanocytes.",
+        source: "'neural crest: ... pigment cells of the epidermis (melanocytes)' (Germ Layers Handout, Page 5)"
+    },
+    {
+        learningObjective: "LO3 (Germ Layers): Discuss the origin and derivatives of neural crest cells.",
+        question: "During development, neural crest cells delaminate from the neural tube and migrate to distant locations. This process, where stationary epithelial cells transform into migratory cells, is a fundamental mechanism in embryogenesis. What is this transformation called?",
+        options: {
+            A: "Gastrulation",
+            B: "Epithelial-to-mesenchymal transition (EMT)",
+            C: "Neurulation",
+            D: "Compaction"
+        },
+        correctAnswer: "B",
+        rationale: "Epithelial-to-mesenchymal transition (EMT) is a process where epithelial cells lose their cell-cell adhesion and polarity, and gain migratory and invasive properties to become mesenchymal stem cells. This is the precise mechanism by which neural crest cells detach from the neuroepithelium of the neural tube to begin their migration.",
+        source: "'Presumptive neural crest cells... dissociate from their neighbors via an epithelial-to-mesenchymal transformation (EMT).' (Germ Layers Handout, Page 8)"
+    },
+    {
+        learningObjective: "LO4 (Germ Layers): Describe the general fates of cells derived from the ectoderm, mesoderm, and endoderm.",
+        question: "The central nervous system, including the brain and spinal cord, is derived from which of the following embryonic structures?",
+        options: {
+            A: "Neural crest",
+            B: "Surface ectoderm",
+            C: "Neural tube (neural) ectoderm",
+            D: "Paraxial mesoderm"
+        },
+        correctAnswer: "C",
+        rationale: "The ectoderm is divided into three main domains. The neural tube, formed during neurulation, is the precursor to the entire central nervous system. The neural crest gives rise to the peripheral nervous system, and the surface ectoderm gives rise to the epidermis.",
+        source: "'neural tube (neural) ectoderm i) gives rise to central nervous system (brain and spinal cord)...' (Germ Layers Handout, Page 5)"
+    },
+    {
+        learningObjective: "LO4 (Germ Layers): Describe the general fates of cells derived from the ectoderm, mesoderm, and endoderm.",
+        question: "Somites are blocks of tissue that form in a cranial to caudal sequence along the neural tube and give rise to the axial skeleton, skeletal muscle, and dermis. From which subdivision of the mesoderm are somites derived?",
+        options: {
+            A: "Axial mesoderm",
+            B: "Intermediate mesoderm",
+            C: "Lateral plate mesoderm",
+            D: "Paraxial mesoderm"
+        },
+        correctAnswer: "D",
+        rationale: "The mesoderm differentiates into several regions. The paraxial mesoderm, located immediately alongside the neural tube, segments into blocks called somites. These somites then differentiate into the sclerotome (vertebrae and ribs), myotome (skeletal muscle), and dermatome (dermis of the back).",
+        source: "'paraxial mesoderm i) mesoderm becomes organized into somites...' (Germ Layers Handout, Page 9)"
+    },
+    {
+        learningObjective: "LO4 (Germ Layers): Describe the general fates of cells derived from the ectoderm, mesoderm, and endoderm.",
+        question: "The inner lining of the digestive tract, from the pharynx to the large intestine, as well as the linings of associated glands like the liver and pancreas, are derived from which primary germ layer?",
+        options: {
+            A: "Ectoderm",
+            B: "Endoderm",
+            C: "Mesoderm",
+            D: "Neural crest"
+        },
+        correctAnswer: "B",
+        rationale: "The endoderm forms the epithelial lining of the primitive gut tube during embryonic folding. This tube and its outgrowths give rise to the epithelial lining of the entire gastrointestinal tract, the respiratory tract, and associated glands such as the liver, gallbladder, and pancreas.",
+        source: "'Endoderm – Endoderm derivatives: Epithelial lining of gastrointestinal tract, lung buds and trachea, liver, gall bladder, pancreas...' (Germ Layers Handout, Page 11)"
+    },
+    {
+        learningObjective: "LO5 (Germ Layers): Describe the establishment of general body form resulting from embryonic folding.",
+        question: "A newborn is diagnosed with gastroschisis, a condition where the intestines are found outside the abdominal cavity, to the right of the umbilicus, with no covering sac. This defect results from an incomplete closure of the:",
+        options: {
+            A: "Cranial neuropore",
+            B: "Caudal neuropore",
+            C: "Cephalic fold",
+            D: "Lateral body folds"
+        },
+        correctAnswer: "D",
+        rationale: "Lateral folding brings the two sides of the embryo ventrally to enclose the body cavities and form the anterior abdominal wall. A failure of these folds to fuse properly in the abdominal region results in a defect through which abdominal contents can herniate. Gastroschisis is a classic example of such a defect.",
+        source: "'Developmental defects due to failure of lateral fold closure can include: ... gastroschisis – intestines are outside of the body through a hole in the abdominal wall.' (Germ Layers Handout, Page 13)"
+    },
+    {
+        learningObjective: "LO5 (Germ Layers): Describe the establishment of general body form resulting from embryonic folding.",
+        question: "Before embryonic folding, the developing heart and pericardial coelom are located cranially to the oropharyngeal membrane. The process of cephalocaudal (head) folding causes a major repositioning of these structures. What is the final position of the heart after head folding?",
+        options: {
+            A: "Dorsal to the spinal cord",
+            B: "Cranial to the brain",
+            C: "Ventral to the foregut and caudal to the mouth",
+            D: "Within the umbilical cord"
+        },
+        correctAnswer: "C",
+        rationale: "Head folding involves the ventral and caudal movement of the most cranial structures. This C-shaped folding tucks the developing heart and pericardial cavity underneath the developing forebrain, moving it into its definitive position in the future thoracic cavity, ventral to the primitive gut tube.",
+        source: "'Head fold – ...the septum transversum (future diaphragm), primordial heart, pericardial coelom (future pericardial or heart cavity), and oropharyngeal membrane move onto the ventral surface of the embryo.' (Germ Layers Handout, Page 12)"
+    },
+    {
+        learningObjective: "LO5 (Germ Layers): Describe the establishment of general body form resulting from embryonic folding.",
+        question: "The 'tube-within-a-tube' body plan is established by embryonic folding. The 'outer tube' consists of the body wall derived from ectoderm and somatic mesoderm. The 'inner tube,' which becomes the gastrointestinal tract, is formed by the incorporation of which germ layer?",
+        options: {
+            A: "Ectoderm",
+            B: "Endoderm",
+            C: "Paraxial mesoderm",
+            D: "Neural crest"
+        },
+        correctAnswer: "B",
+        rationale: "As the lateral folds move ventrally and fuse, they pinch off and enclose a portion of the yolk sac within the embryo. The lining of the yolk sac is endoderm, and this incorporated portion becomes the primitive gut tube, the 'inner tube' of the body plan.",
+        source: "'As the abdominal walls form, part of the endoderm germ layer is incorporated into the embryo as the midgut (primordium of small intestine). Gut tube: Foregut, Midgut, and Hindgut.' (Germ Layers Handout, Page 13)"
+    }
+];
+
+    const quizContainer = document.getElementById('quiz-container');
+    const themeToggleButton = document.getElementById('theme-toggle-button');
+    const bodyElement = document.body;
+
+    function applyTheme(theme) {
+        if (theme === 'light') {
+            bodyElement.classList.add('light-theme');
+            themeToggleButton.textContent = 'Switch to Dark Mode';
+        } else {
+            bodyElement.classList.remove('light-theme');
+            themeToggleButton.textContent = 'Switch to Light Mode';
+        }
+        localStorage.setItem('quizTheme', theme);
+    }
+
+    function loadQuiz() {
+        quizData.forEach((qData, index) => {
+            const questionBlock = document.createElement('div');
+            questionBlock.classList.add('question-block');
+            questionBlock.id = `q${index}`;
+
+            const loText = document.createElement('div');
+            loText.classList.add('learning-objective');
+            loText.innerHTML = qData.learningObjective;
+            questionBlock.appendChild(loText);
+
+            const questionText = document.createElement('p');
+            questionText.classList.add('question-text');
+            questionText.innerHTML = `${index + 1}. ${qData.question}`;
+            questionBlock.appendChild(questionText);
+
+            const optionsDiv = document.createElement('div');
+            optionsDiv.classList.add('options');
+
+            for (const optionKey in qData.options) {
+                const optionId = `q${index}_${optionKey}`;
+                const label = document.createElement('label');
+                label.htmlFor = optionId;
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.name = `q${index}`;
+                radioInput.value = optionKey;
+                radioInput.id = optionId;
+                const labelText = document.createElement('span');
+                labelText.textContent = ` ${optionKey}. ${qData.options[optionKey]}`;
+                label.appendChild(radioInput);
+                label.appendChild(labelText);
+                optionsDiv.appendChild(label);
+            }
+            questionBlock.appendChild(optionsDiv);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.classList.add('button-container');
+
+            const checkButton = document.createElement('button');
+            checkButton.textContent = 'Check Answer';
+            checkButton.classList.add('check-button');
+            checkButton.onclick = () => checkAnswer(index);
+            buttonContainer.appendChild(checkButton);
+            
+            questionBlock.appendChild(buttonContainer);
+
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.classList.add('feedback');
+            questionBlock.appendChild(feedbackDiv);
+
+            quizContainer.appendChild(questionBlock);
+        });
+    }
+
+    function checkAnswer(questionIndex) {
+        const questionBlockElement = document.getElementById(`q${questionIndex}`);
+        const selectedRadioButton = questionBlockElement.querySelector('input[type="radio"]:checked');
+
+        if (!selectedRadioButton) {
+            alert("Please select an answer first.");
+            return;
+        }
+
+        const selectedOptionKey = selectedRadioButton.value;
+        const qData = quizData[questionIndex];
+        const feedbackDiv = questionBlockElement.querySelector('.feedback');
+        const correct = selectedOptionKey === qData.correctAnswer;
+
+        let feedbackHTML = '';
+
+        if (correct) {
+            feedbackHTML = `<span class="feedback-status">Correct!</span>`;
+            feedbackDiv.className = 'feedback correct';
+        } else {
+             feedbackHTML = `<span class="feedback-status">Incorrect. The correct answer is ${qData.correctAnswer}.</span>`;
+            feedbackDiv.className = 'feedback incorrect';
+        }
+
+        feedbackHTML += `<div class="feedback-rationale"><strong>Rationale:</strong> ${qData.rationale}</div>`;
+        feedbackHTML += `<div class="feedback-source">${qData.source}</div>`;
+        feedbackDiv.innerHTML = feedbackHTML;
+    }
+
+    themeToggleButton.addEventListener('click', () => {
+        if (bodyElement.classList.contains('light-theme')) {
+            applyTheme('dark');
+        } else {
+            applyTheme('light');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+        applyTheme(savedTheme);
+        loadQuiz();
+    });
+
+</script>
+
+</body>
+</html>
